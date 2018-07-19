@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  body
+    h1 New Loan
+    form(action="/loan", method="post")
+      p
+        label(for='book_id') Book
+        select(name='book_id')
+          each book in avaibleBooks
+            option(value=book[0]) #{book[1]} 
+      p
+        label(for='patron_id') Patron
+        select(name="patron_id")
+          each patron in patrons
+            option(value=patron.id)= patron.first_name + ' ' + patron.last_name
+      p
+        label(for='loaned_on') Loaned on:
+        input(type='text' , name="loaned_on", value=datetime)
+      p
+        label(for='return_by') Return by:
+        input(type='text', name="return_by", value=return_by)
+      p
+        input(type='submit', value='Create New Loan')
