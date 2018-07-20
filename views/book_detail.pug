@@ -2,20 +2,20 @@ extends layout
 
 block content
   body
-    h1= book.title
+    h1 Book: #{books.title}
     form
       p
         label(for='title') Title
-        input#title(type='text', value= book.title)
+        input#title(type='text', value= books.title)
       p
         label(for='author') Author
-        input#author(type='text', value= book.author)
+        input#author(type='text', value= books.author)
       p
         label(for='genre') Genre
-        input#genre(type='text', value= book.genre)
+        input#genre(type='text', value= books.genre)
       p
         label(for='first_published') First Published
-        input#first_published(type='text', value= book.first_published)
+        input#first_published(type='text', value= books.first_published)
       p
         input(type='submit', value='Update')
     h2 Loan History
@@ -29,13 +29,16 @@ block content
           th Returned on
           th Action
       tbody
-        tr
-          td
-            a(href='book_detail')
-          td
-            a(href='patron_detail')
-          td 2015-12-12
-          td 2015-12-19
-          td
-          td
-            a.button(href='return_book') Return Book
+        each loan in books.Loans
+          tr
+            td
+              a(href='/all_books/'+loan.Book.id)=loan.Book.title
+            td
+              a(href='/all_patrons/'+loan.Patron.id)=loan.Patron.first_name+' '+loan.Patron.last_name
+            td=loan.loaned_on
+            td=loan.return_by
+            td=loan.returned_on
+            if !loan.returned_on
+              td
+                a(href='/return_book/'+loan.book_id class='button') Return Book
+

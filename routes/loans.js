@@ -40,7 +40,6 @@ router.get('/new_loan', function(req, res, next) {
         for (var key in books) {
           avaibleBooks.push([books[key].id , books[key].title] )
         }
-        console.log(avaibleBooks);
          res.render('new_loan', { avaibleBooks: avaibleBooks, patrons: patrons, datetime: datetime, return_by: return_by , loans:loans })
       }
     )
