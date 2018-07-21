@@ -15,9 +15,27 @@ router.get('/new_patron', function(req, res, next) {
 //List all patrons
 router.get('/all_patrons', function(req, res, next) {
     Patron.findAll().then(function (patrons) {
+      //res.json(patrons)  
       res.render('all_patrons', { patrons: patrons , title: 'AllPatrons' });
     })
 });
+
+// Get patron details 
+router.get("/patron_detail/:id", function(req, res, next) {
+    Patron.findOne({
+      include: [ 
+        { model: Loan,
+         include: [Book]},
+      ],
+      where: {
+        id : req.params.id
+      }
+    }).then(function (patrons) {
+     // res.json(patrons)
+      res.render('patron_detail', { patrons :patrons, title: 'PatronDetail' });
+    })
+   
+  });
 
 //***  POST **** 
 // create new patron

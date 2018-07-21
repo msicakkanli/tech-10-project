@@ -2,56 +2,56 @@ extends layout
 
 block content
   body
-    h1 Patron: Andrew Chalkley
+    h1 Patron: #{patrons.first_name + ' ' + patrons.last_name}
     form
       p
         label(for='first_name') First Name
-        input#first_name(type='text', value='Andrew')
+        input#first_name(type='text', value= patrons.first_name)
       p
         label(for='last_name') Last Name
-        input#last_name(type='text', value='Chalkley')
+        input#last_name(type='text', value= patrons.last_name)
       p
         label(for='address')  Address
-        input#address(type='text', value='1234 NE 20st St')
+        input#address(type='text', value= patrons.address )
       p
         label(for='email') Email
-        input#email(type='text', value='andrew.chalkley@teamtreehouse.com')
+        input#email(type='text', value= patrons.email)
       p
         label(for='library_id') Library ID
-        input#library_id(type='text', value='MCL1001')
+        input#library_id(type='text', value= patrons.library_id)
       p
         label(for='zip_code') Zip Code
-        input#zip_code(type='text', value='90210')
+        input#zip_code(type='text', value= patrons.zip_code)
       p
         input(type='submit', value='Update')
-    h2 Loan History
-    table
-      thead
-        tr
-          th Book
-          th Patron 
-          th Loaned on
-          th Return by 
-          th Returned on
-          th Action
-      tbody
-        tr
-          td
-            a(href='book_detail') Harry Potter and the Goblet of Fire
-          td
-            a(href='patron_detail') Andrew Chalkley
-          td 2015-12-11
-          td 2015-12-18
-          td
-          td
-            a.button(href='return_book') Return Book
-        tr
-          td
-            a(href='book_detail') A Brief History of Time
-          td
-            a(href='patron_detail') Andrew Chalkley
-          td 2015-12-12
-          td 2015-12-19
-          td
-          td
-            a.button(href='return_book') Return Book
+    //- h2 Loan History
+    //- table
+    //-   thead
+    //-     tr
+    //-       th Book
+    //-       th Patron 
+    //-       th Loaned on
+    //-       th Return by 
+    //-       th Returned on
+    //-       th Action
+    //-   tbody
+    //-     tr
+    //-       td
+    //-         a(href='book_detail') Harry Potter and the Goblet of Fire
+    //-       td
+    //-         a(href='patron_detail') Andrew Chalkley
+    //-       td 2015-12-11
+    //-       td 2015-12-18
+    //-       td
+    //-       td
+    //-         a.button(href='return_book') Return Book
+    //-     tr
+    //-       td
+    //-         a(href='book_detail') A Brief History of Time
+    //-       td
+    //-         a(href='patron_detail') Andrew Chalkley
+    //-       td 2015-12-12
+    //-       td 2015-12-19
+    //-       td
+    //-       td
+    //-         a.button(href='return_book') Return Book

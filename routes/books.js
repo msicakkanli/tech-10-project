@@ -34,7 +34,7 @@ router.get('/books_overdue', (req, res) => {
         }
     }).
     then((loans) => {
-      
+      //res.json(loans)
        res.render('overdue_books', { loans : loans , title:"Books Overdue" });
     });
 });
