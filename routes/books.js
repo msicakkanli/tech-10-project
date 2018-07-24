@@ -5,6 +5,7 @@ const router = express.Router();
 const today = new Date();
 const moment = require('moment');
 const Sequelize = require('sequelize');
+const datetime = moment().format("YYYY-MM-DD");
 
 // ***** GET *****
 // get all books 
@@ -69,13 +70,43 @@ router.get("/book_detail/:id", function(req, res, next) {
       id : req.params.id
     }
   }).then(function (books) {
-    //res.json(books)
+   
     res.render('book_detail', { books :books, title: 'BookDetail' });
   })
  
 });
 
+router.get("/return_book/:id", function (req,res,next) {
+  Loan.findOne({
+    include: [ 
+      {model: Patron},
+      {model: Book}
+    ],
+    where: {
+      id : req.params.id
+    }
+  }).then(function (loan) {
+   // res.json(loan)
+   res.render('return_book', { loan :loan, datetime:datetime, title: 'BookDetail' });
+  })
+})
+
 // *** POST *** 
+router.post('/return_book/:id', function(req, res, next) {
+    const body = req.body.returned_on
+    Loan.findOne({
+      where: {
+        id : req.params.id
+      }
+    }).then(function(loan){
+      return loan.update({returned_on : body})
+    }).then(function () {
+      res.redirect('../all_loans');
+    })
+});
+
+
+
 // create new book 
 
 router.post('/books', function(req, res, next){
@@ -94,5 +125,21 @@ router.post('/books', function(req, res, next){
       console.log(err);
     });
 })
+
+//update book detail 
+router.post('/book_detail/:id', function(req, res, next) {
+  const body = req.body
+  console.log(body);
+  Book.findOne({
+    where: {
+      id : req.params.id
+    }
+  }).then(function(book){
+    return book.update(body)
+  }).then(function () {
+    res.redirect('../all_books');
+  })
+});
+
   
 module.exports = router;

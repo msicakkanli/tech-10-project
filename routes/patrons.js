@@ -31,8 +31,8 @@ router.get("/patron_detail/:id", function(req, res, next) {
         id : req.params.id
       }
     }).then(function (patrons) {
-     // res.json(patrons)
-      res.render('patron_detail', { patrons :patrons, title: 'PatronDetail' });
+     //res.json(patrons)
+     res.render('patron_detail', { patrons: patrons });
     })
    
   });
@@ -44,5 +44,20 @@ router.post('/new_patron', function(req, res, next) {
     Patron.create(req.body).then(function() {
       res.redirect("all_patrons");
     });
+});
+
+//update patron detail
+router.post('/patron_detail/:id', function(req, res, next) {
+  const body = req.body
+  console.log(body);
+  Patron.findOne({
+    where: {
+      id : req.params.id
+    }
+  }).then(function(patron){
+    return patron.update(body)
+  }).then(function () {
+    res.redirect('../all_patrons');
+  })
 });
 module.exports = router;

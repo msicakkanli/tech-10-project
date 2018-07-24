@@ -15,7 +15,11 @@ router.get('/new_loan', function(req, res, next) {
     //get all data 
     const allBooks = Book.findAll();
     const allPatrons = Patron.findAll();
-    const allLoanBooks = Loan.findAll();
+    const allLoanBooks = Loan.findAll({
+      where: {
+        returned_on : null,
+      }
+    });
     
     Promise.all([allBooks, allPatrons, allLoanBooks],
     )
@@ -26,7 +30,8 @@ router.get('/new_loan', function(req, res, next) {
         const loans = data[2];
         const loanBooks = [];
         const avaibleBooks = []
-        //find out loan books and exclude to avaible books 
+      
+       // find out loan books and exclude to avaible books 
         for (var key in loans) {
            loanBooks.push(loans[key].book_id)
         }
@@ -40,6 +45,7 @@ router.get('/new_loan', function(req, res, next) {
         for (var key in books) {
           avaibleBooks.push([books[key].id , books[key].title] )
         }
+      //res.json(loans)
          res.render('new_loan', { avaibleBooks: avaibleBooks, patrons: patrons, datetime: datetime, return_by: return_by , loans:loans })
       }
     )
@@ -52,7 +58,13 @@ router.get('/all_loans', (req, res) => {
         { model: Patron },
         { model: Book },
       ],
+      where: {
+        returned_on 
+           : null
+      
+      }
     }).then((loans) => { 
+      //res.json(loans)
       res.render('all_loans', { loans: loans , loanstatus : "Loans" }); 
     });
 });
@@ -87,6 +99,16 @@ router.get('/loan_checked_out', (req, res) => {
       res.render('all_loans', { loans: loans , loanstatus : "Checked Out Books" }); 
     });
 });
+
+// create new loan
+
+router.post('/loan', function (req,res,next) {
+  var query = req.body
+  Loan.create(query).then(function () {
+    res.redirect("all_loans");
+  })
+})
+
 
 
 module.exports = router;
