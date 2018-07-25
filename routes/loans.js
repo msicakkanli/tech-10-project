@@ -57,12 +57,7 @@ router.get('/all_loans', (req, res) => {
       include: [ 
         { model: Patron },
         { model: Book },
-      ],
-      where: {
-        returned_on 
-           : null
-      
-      }
+      ]
     }).then((loans) => { 
       //res.json(loans)
       res.render('all_loans', { loans: loans , loanstatus : "Loans" }); 
