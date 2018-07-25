@@ -1,4 +1,6 @@
-extends layout
-
-block content
-  h1 Aradığınız şeyi bulamadık AMK
+if(errors)
+  h2.errors Ooops an error occured!
+  ul.errors
+    each error in errors
+      li
+        =error.message
