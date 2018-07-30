@@ -9,13 +9,12 @@ const Sequelize = require('sequelize');
 //go to create new patron 
 
 router.get('/new_patron', function(req, res, next) {
-    res.render('new_patron', { title: 'Express' });
+    res.render('new_patron', { patron: Patron.build() });
 });
 
 //List all patrons
 router.get('/all_patrons', function(req, res, next) {
     Patron.findAll().then(function (patrons) {
-      //res.json(patrons)  
       res.render('all_patrons', { patrons: patrons , title: 'AllPatrons' });
     })
 });
@@ -31,7 +30,6 @@ router.get("/patron_detail/:id", function(req, res, next) {
         id : req.params.id
       }
     }).then(function (patrons) {
-     //res.json(patrons)
      res.render('patron_detail', { patrons: patrons });
     })
    
@@ -41,6 +39,7 @@ router.get("/patron_detail/:id", function(req, res, next) {
 // create new patron
 
 router.post('/new_patron', function(req, res, next) {
+  console.log(req.body);
     Patron.create(req.body).then(function() {
       res.redirect("all_patrons");
     }).catch(function(err){

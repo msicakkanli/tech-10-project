@@ -10,9 +10,23 @@ module.exports = (sequelize, DataTypes) => {
 
     book_id: DataTypes.INTEGER,
     patron_id: DataTypes.INTEGER,
-    loaned_on: DataTypes.DATEONLY,
-    return_by: DataTypes.DATEONLY,
-    returned_on: DataTypes.DATEONLY
+    loaned_on:  {
+      type: DataTypes.DATEONLY,
+      validate : {
+        notEmpty : {
+          msg: "Loan Date is required field"
+        }
+      }
+    } ,
+    return_by:  {
+      type: DataTypes.DATEONLY,
+      validate : {
+        notEmpty : {
+          msg: "Return Date is required field"
+        }
+      }
+    } ,
+    returned_on:DataTypes.DATEONLY
   }, {
    // timestamps: false,
     // underscored: true

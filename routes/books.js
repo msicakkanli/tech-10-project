@@ -18,8 +18,10 @@ router.get('/all_books', function(req,res,err){
 
 //create new book page
 router.get('/books_new', function(req, res, next) {
-    res.render('new_book', { title: 'Books' });
+    res.render('new_book', {books: Book.build()});
   });
+
+
   
 //list overdue books 
 router.get('/books_overdue', (req, res) => {
@@ -35,12 +37,11 @@ router.get('/books_overdue', (req, res) => {
         }
     }).
     then((loans) => {
-      //res.json(loans)
        res.render('overdue_books', { loans : loans , title:"Books Overdue" });
     });
 });
 
-//List all checked out books 
+//list all checked out books 
 
 router.get('/checked_books', (req, res) => {
     Loan.findAll({
@@ -53,7 +54,6 @@ router.get('/checked_books', (req, res) => {
       }
     })
       .then((loans) => {
-       // res.json(loans)
         res.render('overdue_books', { loans : loans , title:"Books Checked Out"});
       });
 });
@@ -70,12 +70,12 @@ router.get("/book_detail/:id", function(req, res, next) {
       id : req.params.id
     }
   }).then(function (books) {
-   
-    res.render('book_detail', { books :books, title: 'BookDetail' });
+   res.render('book_detail', { books :books, title: 'BookDetail' });
   })
  
 });
 
+//get return book list 
 router.get("/return_book/:id", function (req,res,next) {
   Loan.findOne({
     include: [ 
@@ -86,12 +86,12 @@ router.get("/return_book/:id", function (req,res,next) {
       id : req.params.id
     }
   }).then(function (loan) {
-   // res.json(loan)
    res.render('return_book', { loan :loan, datetime:datetime, title: 'BookDetail' });
   })
 })
 
 // *** POST *** 
+// update return book 
 router.post('/return_book/:id', function(req, res, next) {
     const body = req.body.returned_on
     Loan.findOne({
@@ -109,14 +109,13 @@ router.post('/return_book/:id', function(req, res, next) {
 
 // create new book 
 
-router.post('/books', function(req, res, next){
+router.post('/books_new', function(req, res, next){
   Book.create(req.body).then(function(){
     res.redirect('all_books')
   }).catch(function(err){
       if(err.name === "SequelizeValidationError"){
-          //res.send(err.errors)
           res.render("new_book",
-                     {loan: Book.build(req.body),
+                     {books: Book.build(req.body),
                       errors: err.errors
           });
       } else{
@@ -127,19 +126,39 @@ router.post('/books', function(req, res, next){
     });
 })
 
-//update book detail 
+//update book detail
 router.post('/book_detail/:id', function(req, res, next) {
-  const body = req.body
-  console.log(body);
-  Book.findOne({
+  Book.findAll({
     where: {
-      id : req.params.id
+      id: req.params.id
     }
-  }).then(function(book){
-    return book.update(body)
-  }).then(function () {
-    res.redirect('../all_books');
   })
+    .then(function(book) {
+      return Book.update(req.body, {
+        where: {
+          id: req.params.id
+        }
+      }).then(() => {
+        res.redirect('/all_books');
+      });
+    })
+    .catch(function(error) {
+      if (error.name === 'SequelizeValidationError') {
+        Book.findAll({
+          where: {
+            id: req.params.id },
+          include: [
+            {
+              model: Loan,
+              include: 
+              [{model: Patron}]
+            }
+          ]
+        }).then(function(bookDetails) {
+         res.render('new_book', {books: Book.build(req.body), errors: error.errors}); 
+        });
+      }
+    });
 });
 
   

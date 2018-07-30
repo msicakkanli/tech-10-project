@@ -45,7 +45,6 @@ router.get('/new_loan', function(req, res, next) {
         for (var key in books) {
           avaibleBooks.push([books[key].id , books[key].title] )
         }
-      //res.json(loans)
          res.render('new_loan', { avaibleBooks: avaibleBooks, patrons: patrons, datetime: datetime, return_by: return_by , loans:loans })
       }
     )
@@ -97,12 +96,58 @@ router.get('/loan_checked_out', (req, res) => {
 
 // create new loan
 
-router.post('/loan', function (req,res,next) {
+router.post('/new_loan', function (req,res,next) {
   var query = req.body
+  console.log(req.body);
+  const allBooks = Book.findAll();
+  const allPatrons = Patron.findAll();
   Loan.create(query).then(function () {
-    res.redirect("all_loans");
-  })
+    res.redirect("all_loans")
+  }).catch(function(err){
+    if(err.name === "SequelizeValidationError"){
+      const allBooks = Book.findAll();
+      const allPatrons = Patron.findAll();
+      const allLoanBooks = Loan.findAll({
+        where: {
+          returned_on : null,
+        }
+      });
+      
+      Promise.all([allBooks, allPatrons, allLoanBooks],
+      )
+      //split object to book, patron, loan
+        .then(function(data){
+          const books = data[0];
+          const patrons = data[1];
+          const loans = data[2];
+          const loanBooks = [];
+          const avaibleBooks = []
+        
+         // find out loan books and exclude to avaible books 
+          for (var key in loans) {
+             loanBooks.push(loans[key].book_id)
+          }
+          for (var i=0 ; i< loanBooks.length; i++) {
+          for (var key in books) {
+            if (books[key].id == loanBooks[i] ) {
+              delete books[key]
+            }
+          }
+        }
+          for (var key in books) {
+            avaibleBooks.push([books[key].id , books[key].title] )
+          }
+           res.render('new_loan', { avaibleBooks: avaibleBooks, patrons: patrons, datetime: datetime, return_by: return_by , loans:loans })
+        }
+      )
+    } else{
+      throw err;
+    }
+  }).catch(function(err){
+    console.log(err);
+  });
 })
+
 
 
 
